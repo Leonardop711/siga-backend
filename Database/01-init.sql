@@ -54,4 +54,4 @@ CREATE TABLE auditoria.logs (
 -- Insertar un usuario administrador por defecto
 -- La contraseña es 'Admin123!', su hash BCrypt con work factor 12 es el siguiente:
 INSERT INTO seguridad.usuarios (username, password_hash, rol) 
-VALUES ('admin', '$2a$12$R.3OQ7tTtjU6vK2Jc88b.uFqj0bO8h6256fUqY1f.6/r/M1lZ2uTq', 'admin');
+VALUES ('admin', '$2b$10$YqGTl/.nlJ1QO86Qpr8lDu/d8nCq2GnBalYiHsTFZodAauGvj.w4q', 'admin');
