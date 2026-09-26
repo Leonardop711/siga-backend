@@ -5,6 +5,10 @@ const rateLimit = require('express-rate-limit');
 
 const authRoutes = require('./routes/authRoutes');
 const alumnoRoutes = require('./routes/alumnoRoutes');
+const usuarioRoutes = require('./routes/usuarioRoutes');
+const intentoRoutes = require('./routes/intentoRoutes');
+const calificacionRoutes = require('./routes/calificacionRoutes');
+const logRoutes = require('./routes/logRoutes');
 const db = require('./config/db');
 
 const app = express();
@@ -26,6 +30,10 @@ app.use('/api/', apiLimiter);
 // Rutas (Arquitectura Hexagonal)
 app.use('/api', authRoutes);
 app.use('/api/alumnos', alumnoRoutes);
+app.use('/api/usuarios', usuarioRoutes);
+app.use('/api/intentos', intentoRoutes);
+app.use('/api/calificaciones', calificacionRoutes);
+app.use('/api/logs', logRoutes);
 
 // Endpoint de salud
 app.get('/api/health', async (req, res) => {
