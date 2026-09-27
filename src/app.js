@@ -16,8 +16,9 @@ const app = express();
 // Middlewares globales de seguridad
 app.use(helmet());
 app.use(cors({
-    origin: '*',
+    origin: ['https://projectsunach.dev', 'https://www.projectsunach.dev', 'http://localhost:5173'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
 }));
 app.use(express.json());
 
