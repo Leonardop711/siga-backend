@@ -4,9 +4,9 @@ services:
   db:
     image: postgres:15
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: securepassword
-      POSTGRES_DB: sigadb
+      POSTGRES_USER: ${DB_USER:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-securepassword}
+      POSTGRES_DB: ${DB_NAME:-sigadb}
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./Database:/docker-entrypoint-initdb.d
@@ -16,8 +16,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgres://admin:securepassword@db:5432/sigadb
-      - JWT_SECRET=supersecretkey_change_in_prod
+      - DATABASE_URL=postgres://${DB_USER:-admin}:${DB_PASSWORD:-securepassword}@db:5432/${DB_NAME:-sigadb}
+      - JWT_SECRET=${JWT_SECRET:-supersecretkey_change_in_prod}
     depends_on:
       - db
 
