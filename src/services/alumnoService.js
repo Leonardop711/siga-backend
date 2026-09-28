@@ -26,6 +26,59 @@ class AlumnoService {
         }
         return await alumnoRepository.getAllWithGrades();
     }
+
+    /**
+     * Registra un nuevo alumno en la base de datos previa verificación de permisos (RBAC) y validaciones.
+     * Solo usuarios con rol 'admin' o 'docente' están autorizados.
+     * Registra evento en la auditoría del sistema.
+     */
+    async createAlumno(data, user, ip) {
+        if (user.rol === 'alumno') {
+            throw new Error('No tienes permisos suficientes para registrar alumnos (se requiere rol Admin o Docente)');
+        }
+
+        const { matricula, nombre, apellido, semestre, usuario_id } = data;
+
+        if (!matricula || !nombre || !apellido || semestre === undefined || semestre === null || semestre === '') {
+            throw new Error('Matrícula, nombre, apellido y semestre son campos requeridos');
+        }
+
+        const cleanMatricula = String(matricula).trim();
+        const cleanNombre = String(nombre).trim();
+        const cleanApellido = String(apellido).trim();
+        const sem = parseInt(semestre, 10);
+
+        if (!cleanMatricula || !cleanNombre || !cleanApellido) {
+            throw new Error('Los campos de texto no pueden estar vacíos');
+        }
+
+        if (isNaN(sem) || sem < 1 || sem > 12) {
+            throw new Error('El semestre debe ser un número entero entre 1 y 12');
+        }
+
+        const existing = await alumnoRepository.findByMatricula(cleanMatricula);
+        if (existing) {
+            throw new Error(`Ya existe un alumno registrado con la matrícula '${cleanMatricula}'`);
+        }
+
+        const nuevoAlumno = await alumnoRepository.create({
+            matricula: cleanMatricula,
+            nombre: cleanNombre,
+            apellido: cleanApellido,
+            semestre: sem,
+            usuario_id: usuario_id ? parseInt(usuario_id, 10) : null,
+            activo: true
+        });
+
+        await authRepository.logAudit(
+            'CREATE_ALUMNO',
+            user.username,
+            `Registro de nuevo alumno: ${cleanMatricula} - ${cleanNombre} ${cleanApellido} (Semestre: ${sem})`,
+            ip
+        );
+
+        return nuevoAlumno;
+    }
 }
 
 module.exports = new AlumnoService();

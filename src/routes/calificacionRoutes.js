@@ -4,4 +4,5 @@ const authMiddleware = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 router.get('/', authMiddleware, calificacionController.getAll.bind(calificacionController));
+router.post('/', authMiddleware, calificacionController.create.bind(calificacionController));
 module.exports = router;

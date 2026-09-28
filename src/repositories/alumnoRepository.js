@@ -23,6 +23,22 @@ class AlumnoRepository {
         `, [username]);
         return result.rows;
     }
+    async findByMatricula(matricula) {
+        const result = await db.query(
+            'SELECT * FROM academico.alumnos WHERE matricula = $1',
+            [matricula]
+        );
+        return result.rows[0];
+    }
+
+    async create({ matricula, nombre, apellido, semestre, usuario_id = null, activo = true }) {
+        const result = await db.query(`
+            INSERT INTO academico.alumnos (matricula, nombre, apellido, semestre, usuario_id, activo)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            RETURNING *
+        `, [matricula, nombre, apellido, semestre, usuario_id, activo]);
+        return result.rows[0];
+    }
 }
 
 module.exports = new AlumnoRepository();
