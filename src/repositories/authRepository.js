@@ -22,6 +22,21 @@ class AuthRepository {
             [action, username, details, ip]
         );
     }
+
+    async updateSessionToken(userId, token) {
+        await db.query(
+            'UPDATE seguridad.usuarios SET session_token = $1 WHERE id = $2',
+            [token, userId]
+        );
+    }
+
+    async getSessionToken(userId) {
+        const result = await db.query(
+            'SELECT session_token FROM seguridad.usuarios WHERE id = $1',
+            [userId]
+        );
+        return result.rows[0]?.session_token;
+    }
 }
 
 module.exports = new AuthRepository();
