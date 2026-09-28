@@ -7,6 +7,8 @@ services:
       POSTGRES_USER: ${DB_USER:-admin}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-securepassword}
       POSTGRES_DB: ${DB_NAME:-sigadb}
+    ports:
+      - "127.0.0.1:5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./Database:/docker-entrypoint-initdb.d
