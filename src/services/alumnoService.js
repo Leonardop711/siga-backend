@@ -79,6 +79,41 @@ class AlumnoService {
 
         return nuevoAlumno;
     }
+
+    async updateAlumno(matricula, data, user, ip) {
+        if (user.rol === 'alumno') {
+            throw new Error('No tienes permisos suficientes para editar alumnos');
+        }
+
+        const existing = await alumnoRepository.findByMatricula(matricula);
+        if (!existing) {
+            throw new Error('Alumno no encontrado');
+        }
+
+        const cleanNombre = data.nombre ? String(data.nombre).trim() : existing.nombre;
+        const cleanApellido = data.apellido ? String(data.apellido).trim() : existing.apellido;
+        const sem = data.semestre !== undefined ? parseInt(data.semestre, 10) : existing.semestre;
+
+        const updated = await alumnoRepository.update(matricula, { nombre: cleanNombre, apellido: cleanApellido, semestre: sem });
+        
+        await authRepository.logAudit('UPDATE_ALUMNO', user.username, `Edición de alumno: ${matricula}`, ip);
+        return updated;
+    }
+
+    async deleteAlumno(matricula, user, ip) {
+        if (user.rol === 'alumno') {
+            throw new Error('No tienes permisos suficientes para eliminar alumnos');
+        }
+
+        const existing = await alumnoRepository.findByMatricula(matricula);
+        if (!existing) {
+            throw new Error('Alumno no encontrado');
+        }
+
+        await alumnoRepository.delete(matricula);
+        await authRepository.logAudit('DELETE_ALUMNO', user.username, `Eliminación de alumno: ${matricula}`, ip);
+        return true;
+    }
 }
 
 module.exports = new AlumnoService();

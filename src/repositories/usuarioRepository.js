@@ -19,5 +19,26 @@ class UsuarioRepository {
         `, [username, password_hash, rol, activo]);
         return result.rows[0];
     }
+
+    async update(id, { rol, activo }) {
+        const result = await db.query(`
+            UPDATE seguridad.usuarios 
+            SET rol = $1, activo = $2 
+            WHERE id = $3 
+            RETURNING id, username, rol, activo, creado_en
+        `, [rol, activo, id]);
+        return result.rows[0];
+    }
+
+    async delete(id) {
+        // First delete their related alumnos and grades if they exist
+        const alumnos = await db.query('SELECT matricula FROM academico.alumnos WHERE usuario_id = $1', [id]);
+        for (let row of alumnos.rows) {
+            await db.query('DELETE FROM academico.calificaciones WHERE matricula = $1', [row.matricula]);
+            await db.query('DELETE FROM academico.alumnos WHERE matricula = $1', [row.matricula]);
+        }
+        const result = await db.query('DELETE FROM seguridad.usuarios WHERE id = $1 RETURNING id, username', [id]);
+        return result.rows[0];
+    }
 }
 module.exports = new UsuarioRepository();

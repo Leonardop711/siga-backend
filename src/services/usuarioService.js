@@ -63,5 +63,19 @@ class UsuarioService {
 
         return nuevoUsuario;
     }
+
+    async updateUsuario(id, data, user, ip) {
+        if (user.rol !== 'admin') throw new Error('Solo admin puede editar usuarios');
+        const updated = await usuarioRepository.update(id, data);
+        await authRepository.logAudit('UPDATE_USUARIO', user.username, `Edición de usuario ID ${id}`, ip);
+        return updated;
+    }
+
+    async deleteUsuario(id, user, ip) {
+        if (user.rol !== 'admin') throw new Error('Solo admin puede eliminar usuarios');
+        await usuarioRepository.delete(id);
+        await authRepository.logAudit('DELETE_USUARIO', user.username, `Eliminación de usuario ID ${id}`, ip);
+        return true;
+    }
 }
 module.exports = new UsuarioService();

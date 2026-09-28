@@ -39,6 +39,27 @@ class AlumnoRepository {
         `, [matricula, nombre, apellido, semestre, usuario_id, activo]);
         return result.rows[0];
     }
+
+    async update(matricula, data) {
+        const { nombre, apellido, semestre } = data;
+        const result = await db.query(`
+            UPDATE academico.alumnos 
+            SET nombre = $1, apellido = $2, semestre = $3 
+            WHERE matricula = $4 
+            RETURNING *
+        `, [nombre, apellido, semestre, matricula]);
+        return result.rows[0];
+    }
+
+    async delete(matricula) {
+        // Soft delete or hard delete. Let's do hard delete or deactivate.
+        // We will hard delete for full CRUD as requested, but cascade might be needed.
+        // If they have grades, deleting the alumno will fail if there's a foreign key constraint without cascade.
+        // Let's delete the grades first, then the alumno.
+        await db.query('DELETE FROM academico.calificaciones WHERE matricula = $1', [matricula]);
+        const result = await db.query('DELETE FROM academico.alumnos WHERE matricula = $1 RETURNING *', [matricula]);
+        return result.rows[0];
+    }
 }
 
 module.exports = new AlumnoRepository();

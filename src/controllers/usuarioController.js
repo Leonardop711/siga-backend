@@ -20,5 +20,23 @@ class UsuarioController {
             res.status(400).json({ status: 'error', message: err.message || 'Error al crear usuario' });
         }
     }
+
+    async update(req, res) {
+        try {
+            const data = await usuarioService.updateUsuario(req.params.id, req.body, req.user, req.ip);
+            res.json({ status: 'ok', message: 'Usuario actualizado exitosamente', data });
+        } catch (err) {
+            res.status(400).json({ status: 'error', message: err.message });
+        }
+    }
+
+    async delete(req, res) {
+        try {
+            await usuarioService.deleteUsuario(req.params.id, req.user, req.ip);
+            res.json({ status: 'ok', message: 'Usuario eliminado exitosamente' });
+        } catch (err) {
+            res.status(400).json({ status: 'error', message: err.message });
+        }
+    }
 }
 module.exports = new UsuarioController();
