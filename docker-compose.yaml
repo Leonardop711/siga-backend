@@ -1,4 +1,4 @@
-version: '3.8'
+﻿version: '3.8'
 
 services:
   db:
@@ -22,16 +22,6 @@ services:
       - JWT_SECRET=${JWT_SECRET:-supersecretkey_change_in_prod}
     depends_on:
       - db
-
-  frontend:
-    build: ../siga-frontend
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-    depends_on:
-      - backend
 
 volumes:
   pgdata:

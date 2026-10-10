@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -16,7 +16,7 @@ const app = express();
 // Middlewares globales de seguridad
 app.use(helmet());
 app.use(cors({
-    origin: ['https://www.projectsunach.dev', 'http://localhost:5173'],
+    origin: ['https://www.projectsunach.dev', 'http://localhost:5173', 'http://34.232.144.114', 'http://100.62.195.122'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));
