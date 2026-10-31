@@ -1,8 +1,9 @@
-﻿version: '3.8'
+version: '3.8'
 
 services:
   db:
     image: postgres:15
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USER:-admin}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-securepassword}
@@ -12,16 +13,23 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./Database:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-admin} -d ${DB_NAME:-sigadb}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   backend:
     build: .
+    restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
       - DATABASE_URL=postgres://${DB_USER:-admin}:${DB_PASSWORD:-securepassword}@db:5432/${DB_NAME:-sigadb}
       - JWT_SECRET=${JWT_SECRET:-supersecretkey_change_in_prod}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 volumes:
   pgdata:

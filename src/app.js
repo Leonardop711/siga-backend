@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -12,6 +12,9 @@ const logRoutes = require('./routes/logRoutes');
 const db = require('./config/db');
 
 const app = express();
+
+// Confianza en el reverse proxy (Nginx en VPC Frontend) para identificar la IP real del usuario
+app.set('trust proxy', 1);
 
 // Middlewares globales de seguridad
 app.use(helmet());
