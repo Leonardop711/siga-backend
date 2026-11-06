@@ -23,7 +23,7 @@ app.use(cors({
         'https://projectsunach.dev',
         'https://www.projectsunach.dev',
         'http://localhost:5173',
-        'http://13.216.183.217'
+        'http://44.207.152.20'
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
